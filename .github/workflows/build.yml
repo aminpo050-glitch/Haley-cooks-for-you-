@@ -12,9 +12,30 @@ jobs:
 
       - name: Download Game References
         run: |
-          mkdir -p $HOME/stardew_tmp $HOME/stardew
-          curl -L -o $HOME/refs.zip https://github.com/smapi-mods/StardewValley-ReferenceAssemblies/archive/refs/heads/main.zip
-          unzip -o $HOME/refs.zip -d $HOME/stardew_tmp
+          mkdir -p $HOME/stardew $HOME/stardew_tmp
+          
+          URLS=(
+            "https://github.com/zan374/StardewValley-ReferenceAssemblies/archive/refs/heads/main.zip"
+            "https://github.com/m208/StardewValley-ReferenceAssemblies/archive/refs/heads/main.zip"
+            "https://github.com/StardewModders/ReferenceAssemblies/archive/refs/heads/main.zip"
+          )
+
+          SUCCESS=0
+          for url in "${URLS[@]}"; do
+            echo "Attempting download from: $url"
+            if curl -f -sSL -o $HOME/refs.zip "$url"; then
+              echo "Successfully fetched reference assemblies!"
+              SUCCESS=1
+              break
+            fi
+          done
+
+          if [ $SUCCESS -eq 0 ]; then
+            echo "Failed to fetch reference assemblies from available mirrors."
+            exit 1
+          fi
+
+          unzip -q -o $HOME/refs.zip -d $HOME/stardew_tmp
           find $HOME/stardew_tmp -name "*.dll" -exec cp {} $HOME/stardew/ \;
 
       - name: Build Mod
