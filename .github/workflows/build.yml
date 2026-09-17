@@ -11,10 +11,7 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: Download Game References
-        run: |
-          mkdir -p $HOME/stardew
-          curl -L -o refs.zip https://github.com/Pathoschild/StardewValley-ReferenceAssemblies/releases/download/1.6.8/Stardew.Valley.Reference.Assemblies.1.6.8.zip
-          unzip -o refs.zip -d $HOME/stardew
+        run: git clone --depth 1 https://github.com/Pathoschild/StardewValley-ReferenceAssemblies.git $HOME/stardew
 
       - name: Build Mod
         run: dotnet build -c Release -p:GamePath="$HOME/stardew"
